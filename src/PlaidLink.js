@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
-import Script from 'react-load-script';
-import PropTypes from 'prop-types';
-
-
+import React, { Component } from "react";
+import Script from "react-load-script";
+import PropTypes from "prop-types";
 
 class PlaidLink extends Component {
   constructor(props) {
@@ -10,7 +8,7 @@ class PlaidLink extends Component {
     this.state = {
       disabledButton: true,
       linkLoaded: false,
-      initializeURL: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
+      initializeURL: "https://cdn.plaid.com/link/v2/stable/link-initialize.js"
     };
 
     this.onScriptError = this.onScriptError.bind(this);
@@ -20,30 +18,31 @@ class PlaidLink extends Component {
   }
 
   static defaultProps = {
-    apiVersion: 'v2',
-    env: 'sandbox',
+    apiVersion: "v2",
+    env: "sandbox",
     institution: null,
     selectAccount: false,
     token: null,
     style: {
-      padding: '6px 4px',
-      outline: 'none',
-      background: '#FFFFFF',
-      border: '2px solid #F1F1F1',
-      borderRadius: '4px',
-    },
+      padding: "6px 4px",
+      outline: "none",
+      background: "#FFFFFF",
+      border: "2px solid #F1F1F1",
+      borderRadius: "4px"
+    }
   };
 
   static propTypes = {
     // ApiVersion flag to use new version of Plaid API
     apiVersion: PropTypes.string,
-    
+
     // Displayed once a user has successfully linked their account
     clientName: PropTypes.string.isRequired,
 
     // The Plaid API environment on which to create user accounts.
     // For development and testing, use tartan. For production, use production
-    env: PropTypes.oneOf(['tartan', 'sandbox', 'development', 'production']).isRequired,
+    env: PropTypes.oneOf(["tartan", "sandbox", "development", "production"])
+      .isRequired,
 
     // Open link to a specific institution, for a more custom solution
     institution: PropTypes.string,
@@ -56,13 +55,13 @@ class PlaidLink extends Component {
     // auth, identity, income, transactions, assets
     product: PropTypes.arrayOf(
       PropTypes.oneOf([
-        'connect',  // legacy product name
-        'info',     // legacy product name
-        'auth',
-        'identity',
-        'income',
-        'transactions',
-        'assets',
+        "connect", // legacy product name
+        "info", // legacy product name
+        "auth",
+        "identity",
+        "income",
+        "transactions",
+        "assets"
       ])
     ).isRequired,
 
@@ -99,15 +98,15 @@ class PlaidLink extends Component {
     style: PropTypes.object,
 
     // Button Class names as a String
-    className: PropTypes.string,
-  }
+    className: PropTypes.string
+  };
 
   onScriptError() {
-    console.error('There was an issue loading the link-initialize.js script');
+    console.error("There was an issue loading the link-initialize.js script");
   }
 
   onScriptLoaded() {
-    window.linkHandler = window.Plaid.create({
+    this.setState({
       apiVersion: this.props.apiVersion,
       clientName: this.props.clientName,
       env: this.props.env,
@@ -119,10 +118,8 @@ class PlaidLink extends Component {
       product: this.props.product,
       selectAccount: this.props.selectAccount,
       token: this.props.token,
-      webhook: this.props.webhook,
+      webhook: this.props.webhook
     });
-
-    this.setState({ disabledButton: false });
   }
 
   handleLinkOnLoad() {
@@ -137,14 +134,14 @@ class PlaidLink extends Component {
       this.props.onClick(event);
     }
     const institution = this.props.institution || null;
-    if (window.linkHandler) {
-      window.linkHandler.open(institution);
+    if (this.state.linkHandler) {
+      this.state.linkHandler.open(institution);
     }
   }
 
   exit(configurationObject) {
-    if (window.linkHandler) {
-      window.linkHandler.exit(configurationObject);
+    if (this.state.linkHandler) {
+      this.state.linkHandler.exit(configurationObject);
     }
   }
 
@@ -155,13 +152,15 @@ class PlaidLink extends Component {
           onClick={this.handleOnClick}
           disabled={this.state.disabledButton}
           style={this.props.style}
-          className={this.props.className}>
+          className={this.props.className}
+        >
           {this.props.children}
         </button>
         <Script
           url={this.state.initializeURL}
           onError={this.onScriptError}
-          onLoad={this.onScriptLoaded} />
+          onLoad={this.onScriptLoaded}
+        />
       </div>
     );
   }
